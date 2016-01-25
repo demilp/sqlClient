@@ -1,0 +1,12 @@
+C:\Users\demianl\Documents\Visual Studio 2013\Projects\SQLClient\SQLClient\bin\Debug\SQLClient.exe.config
+C:\Users\demianl\Documents\Visual Studio 2013\Projects\SQLClient\SQLClient\bin\Debug\SQLClient.exe
+C:\Users\demianl\Documents\Visual Studio 2013\Projects\SQLClient\SQLClient\bin\Debug\SQLClient.pdb
+C:\Users\demianl\Documents\Visual Studio 2013\Projects\SQLClient\SQLClient\obj\Debug\SQLClient.csprojResolveAssemblyReference.cache
+C:\Users\demianl\Documents\Visual Studio 2013\Projects\SQLClient\SQLClient\obj\Debug\SQLClient.exe
+C:\Users\demianl\Documents\Visual Studio 2013\Projects\SQLClient\SQLClient\obj\Debug\SQLClient.pdb
+C:\Users\Demian\Documents\Visual Studio 2015\Projects\SQLClient\SQLClient\bin\Debug\SQLClient.exe.config
+C:\Users\Demian\Documents\Visual Studio 2015\Projects\SQLClient\SQLClient\obj\Debug\SQLClient.exe
+C:\Users\Demian\Documents\Visual Studio 2015\Projects\SQLClient\SQLClient\obj\Debug\SQLClient.pdb
+C:\Users\Demian\Documents\Visual Studio 2015\Projects\SQLClient\SQLClient\bin\Debug\SQLClient.exe
+C:\Users\Demian\Documents\Visual Studio 2015\Projects\SQLClient\SQLClient\bin\Debug\SQLClient.pdb
+C:\Users\Demian\Documents\Visual Studio 2015\Projects\SQLClient\SQLClient\obj\Debug\SQLClient.csprojResolveAssemblyReference.cache
