@@ -9,4 +9,3 @@ C:\Users\Demian\Documents\Visual Studio 2015\Projects\SQLClient\SQLClient\bin\Re
 C:\Users\Demian\Documents\Visual Studio 2015\Projects\SQLClient\SQLClient\bin\Release\SQLClient.pdb
 C:\Users\Demian\Documents\Visual Studio 2015\Projects\SQLClient\SQLClient\obj\Release\SQLClient.exe
 C:\Users\Demian\Documents\Visual Studio 2015\Projects\SQLClient\SQLClient\obj\Release\SQLClient.pdb
-C:\Users\Demian\Documents\Visual Studio 2015\Projects\SQLClient\SQLClient\obj\Release\SQLClient.csprojResolveAssemblyReference.cache
