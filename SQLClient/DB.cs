@@ -35,8 +35,26 @@ public class DB
 
     public void Initialize( string pPath)
     {
+        bool isOleDb = false;
         if (_initialized) return;
-        _conn = new AccessConection(pPath);
+        string[] parameters = pPath.Split(';');
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            if(parameters[i] == "")
+                continue;
+            string key = parameters[i].Split('=')[0];
+            string value = parameters[i].Split('=')[1];
+            if (key.ToLower().Trim() == "provider")
+                isOleDb = true;
+        }
+        if (isOleDb)
+        {
+            _conn = new _OledbConnection(pPath);
+        }
+        else
+        {
+            _conn = new _SqlConnection(pPath);
+        }
         _initialized = true;
     }
     public void Close()
@@ -161,7 +179,7 @@ public class DB
     //------------------------------------------------------------------------------------------
 
     private static DB _instance;
-    private AccessConection _conn;
+    private AccessConnection _conn;
     private bool _initialized;
 
     //------------------------------------------------------------------------------------------

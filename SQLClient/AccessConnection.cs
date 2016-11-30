@@ -4,10 +4,11 @@ using System.Text;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.Odbc;
+using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Diagnostics;
 
-public class AccessConection
+public abstract class AccessConnection
 {
     //-----------------------------------------------------------------------------------------------------------------------------------------------------
     //PUBLIC_MEMBERS
@@ -31,44 +32,11 @@ public class AccessConection
     //CONSTRUCTORS_DESTRUCTORS
     //------------------------------------------------------------------------------------------
 
-    public AccessConection(string connectionString)//(string path, string pass)
-    {
-        //this._path = path;
-        //this._pass = pass;
-
-        try
-        {
-            _isConnected = false;
-            _conection = new OleDbConnection();//new OdbcConnection();
-            //_conection.ConnectionString = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + _path + ";Mode= Share Deny None;Uid=Admin;Pwd=" + _pass;
-            _conection.ConnectionString = connectionString;//SQLClient.Properties.Settings.Default.connectionString;//connectionString;
-            _conection.Open();
-        }
-        catch (Exception ex)
-        {
-            Utils.LogMessage(ex.Message);
-        }
-    }
-
     //------------------------------------------------------------------------------------------
     //PUBLIC_METHODS
     //------------------------------------------------------------------------------------------
 
-    public bool ExistDB()
-    {
-        try
-        {
-            _conection.Open();
-            _conection.Close();            
-            return true;
-        }
-        catch (OleDbException ex)
-        {
-            Utils.LogMessage("AccessConection.ExistDB() error=" + ex.Message);
-            return false;
-        }
-    }
-
+    public abstract bool ExistDB();
     /*public string ExecuteQuery(string query, out int r)
     {
         r = 0;
@@ -90,62 +58,20 @@ public class AccessConection
             r = -1;
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine();
-            Utils.LogMessage("AccessConection.ExecuteQuery() query=" + query + "error=" + ex.Message);
+            Utils.LogMessage("AccessConnection.ExecuteQuery() query=" + query + "error=" + ex.Message);
             return ex.Message;
         }
     }*/
 
-    public bool ExecuteQuery(string query)
-    {
-        try
-        {
-            if (_conection.State != ConnectionState.Open)
-                _conection.Open();
-
-            OleDbCommand insertCommand = new OleDbCommand(query, _conection);
-            insertCommand.ExecuteNonQuery();
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Utils.LogMessage("AccessConection.ExecuteQuery() query=" + query + "error=" + ex.Message);
-            return false;
-        }
-    }
+    public abstract bool ExecuteQuery(string query);
 
 
-    public DataTable ExecuteSelect(string query )
-    {
-        DataTable dt = null;
 
-        try
-        {
-            if (_conection.State != ConnectionState.Open)
-                _conection.Open();
+    public abstract DataTable ExecuteSelect(string query);
 
-            OleDbDataAdapter da = new OleDbDataAdapter(query, _conection);
 
-            DataSet ds = new DataSet();
-            da.Fill(ds);
+    public abstract void ForceClose();
 
-            dt = ds.Tables[0];
-        }
-        catch (Exception ex)
-        {
-            Utils.LogMessage("AccessConection.ExecuteSelect() query=" + query + "error=" + ex.Message);
-            throw new Exception(ex.Message);
-        }
-
-        return dt;
-    }
-
-    public void ForceClose()
-    {
-        if (_isConnected)
-            _conection.Close();
-
-        _conection.Dispose();        
-    }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------------
     //PRIVATE_MEMBERS
@@ -157,7 +83,7 @@ public class AccessConection
 
     private string _path;
     private string _pass;
-    private OleDbConnection _conection;
+    private SqlConnection _conection;
     private bool _isConnected;
 
     //------------------------------------------------------------------------------------------

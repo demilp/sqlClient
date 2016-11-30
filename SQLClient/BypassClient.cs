@@ -329,7 +329,7 @@ namespace Bypass
 				}
 				catch (Exception e)
 				{
-					//Debug.Log(e.Message);
+					Console.WriteLine(e.Message);
 				}
 			}
 		}
