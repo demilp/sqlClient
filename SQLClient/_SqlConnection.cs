@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
+using System.Data.Common;
 using System.Data.OleDb;
-using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
-using System.Diagnostics;
 
 public class _SqlConnection : AccessConnection
 {
@@ -27,10 +24,10 @@ public class _SqlConnection : AccessConnection
         try
         {
             _isConnected = false;
-            _conection = new SqlConnection();//new OdbcConnection();
-            //_conection.ConnectionString = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + _path + ";Mode= Share Deny None;Uid=Admin;Pwd=" + _pass;
-            _conection.ConnectionString = connectionString;//SQLClient.Properties.Settings.Default.connectionString;//connectionString;
-            _conection.Open();
+            _connection = new SqlConnection();//new OdbcConnection();
+            //_connection.ConnectionString = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + _path + ";Mode= Share Deny None;Uid=Admin;Pwd=" + _pass;
+            _connection.ConnectionString = connectionString;//SQLClient.Properties.Settings.Default.connectionString;//connectionString;
+            _connection.Open();
         }
         catch (Exception ex)
         {
@@ -46,8 +43,8 @@ public class _SqlConnection : AccessConnection
     {
         try
         {
-            _conection.Open();
-            _conection.Close();            
+            _connection.Open();
+            _connection.Close();            
             return true;
         }
         catch (OleDbException ex)
@@ -62,10 +59,10 @@ public class _SqlConnection : AccessConnection
         r = 0;
         try
         {
-            if ( _conection.State != ConnectionState.Open )
-                _conection.Open();
+            if ( _connection.State != ConnectionState.Open )
+                _connection.Open();
 
-            OdbcCommand insertCommand = new OdbcCommand(query, _conection);
+            OdbcCommand insertCommand = new OdbcCommand(query, _connection);
             insertCommand.ExecuteNonQuery();
 
             insertCommand.CommandText = "Select @@Identity";
@@ -87,10 +84,10 @@ public class _SqlConnection : AccessConnection
     {
         try
         {
-            if (_conection.State != ConnectionState.Open)
-                _conection.Open();
+            if (_connection.State != ConnectionState.Open)
+                _connection.Open();
 
-            SqlCommand insertCommand = new SqlCommand(query, _conection);
+            SqlCommand insertCommand = new SqlCommand(query, _connection);
             insertCommand.ExecuteNonQuery();
             return true;
         }
@@ -108,10 +105,10 @@ public class _SqlConnection : AccessConnection
 
         try
         {
-            if (_conection.State != ConnectionState.Open)
-                _conection.Open();
+            if (_connection.State != ConnectionState.Open)
+                _connection.Open();
 
-            SqlDataAdapter da = new SqlDataAdapter(query, _conection);
+            SqlDataAdapter da = new SqlDataAdapter(query, _connection);
 
             DataSet ds = new DataSet();
             da.Fill(ds);
@@ -126,13 +123,44 @@ public class _SqlConnection : AccessConnection
 
         return dt;
     }
+    public override DbDataReader EQ(string query)
+    {
+        if (_connection.State != ConnectionState.Open)
+            _connection.Open();
 
+        SqlCommand command =
+            new SqlCommand(query, _connection);
+
+        SqlDataReader reader = command.ExecuteReader();
+
+        return reader;
+    }
+
+    public override DataSet EQ2(string query)
+    {
+        try
+        {
+            if (_connection.State != ConnectionState.Open)
+                _connection.Open();
+
+            SqlDataAdapter da = new SqlDataAdapter(query, _connection);
+
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            return ds;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return null;
+        }
+    }
     public override void ForceClose()
     {
         if (_isConnected)
-            _conection.Close();
+            _connection.Close();
 
-        _conection.Dispose();        
+        _connection.Dispose();        
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -145,7 +173,7 @@ public class _SqlConnection : AccessConnection
 
     private string _path;
     private string _pass;
-    private SqlConnection _conection;
+    private SqlConnection _connection;
     private bool _isConnected;
 
     //------------------------------------------------------------------------------------------

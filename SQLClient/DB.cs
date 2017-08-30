@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data;
+using System.Data.Common;
 using System.IO;
 using Bypass.SimpleJSON;
 
@@ -50,6 +51,7 @@ public class DB
         if (isOleDb)
         {
             _conn = new _OledbConnection(pPath);
+            //_conn = new _OledbDataReaderConnection(pPath);
         }
         else
         {
@@ -201,5 +203,14 @@ public class DB
     {
         DateTime now = DateTime.Now;
         return ("(" + now.ToString("yyyy-MM-dd") + ")");
+    }
+    public DbDataReader EQ(string query)
+    {
+        return _conn.EQ(query);
+    }
+
+    public DataSet EQ2(string query)
+    {
+        return _conn.EQ2(query);
     }
 }

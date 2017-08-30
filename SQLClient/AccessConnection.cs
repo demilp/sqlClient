@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
+using System.Data.Common;
 using System.Data.OleDb;
 using System.Data.Odbc;
 using System.Data.SqlClient;
@@ -66,6 +67,8 @@ public abstract class AccessConnection
     public abstract bool ExecuteQuery(string query);
 
 
+    public abstract DbDataReader EQ(string query);
+    public abstract DataSet EQ2(string query);
 
     public abstract DataTable ExecuteSelect(string query);
 

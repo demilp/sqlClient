@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
+using System.Data.Common;
 using System.Data.OleDb;
-using System.Data.Odbc;
-using System.Data.SqlClient;
 using System.Security.Cryptography;
-using System.Diagnostics;
 
 public class _OledbConnection : AccessConnection
 {
@@ -27,10 +23,10 @@ public class _OledbConnection : AccessConnection
         try
         {
             _isConnected = false;
-            _conection = new OleDbConnection();//new OdbcConnection();
-            //_conection.ConnectionString = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + _path + ";Mode= Share Deny None;Uid=Admin;Pwd=" + _pass;
-            _conection.ConnectionString = connectionString;//SQLClient.Properties.Settings.Default.connectionString;//connectionString;
-            _conection.Open();
+            _connection = new OleDbConnection();//new OdbcConnection();
+            //_connection.ConnectionString = "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + _path + ";Mode= Share Deny None;Uid=Admin;Pwd=" + _pass;
+            _connection.ConnectionString = connectionString;//SQLClient.Properties.Settings.Default.connectionString;//connectionString;
+            _connection.Open();
         }
         catch (Exception ex)
         {
@@ -46,8 +42,8 @@ public class _OledbConnection : AccessConnection
     {
         try
         {
-            _conection.Open();
-            _conection.Close();            
+            _connection.Open();
+            _connection.Close();            
             return true;
         }
         catch (OleDbException ex)
@@ -56,16 +52,48 @@ public class _OledbConnection : AccessConnection
             return false;
         }
     }
+    public override DbDataReader EQ(string query)
+    {
+        if (_connection.State != ConnectionState.Open)
+            _connection.Open();
+
+        OleDbCommand command =
+            new OleDbCommand(query, _connection);
+
+        OleDbDataReader reader = command.ExecuteReader();
+
+        return reader;
+    }
+
+    public override DataSet EQ2(string query)
+    {
+        try
+        {
+            if (_connection.State != ConnectionState.Open)
+                _connection.Open();
+
+            OleDbDataAdapter da = new OleDbDataAdapter(query, _connection);
+
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            return ds;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return null;
+        }
+    }
 
     /*public string ExecuteQuery(string query, out int r)
     {
         r = 0;
         try
         {
-            if ( _conection.State != ConnectionState.Open )
-                _conection.Open();
+            if ( _connection.State != ConnectionState.Open )
+                _connection.Open();
 
-            OdbcCommand insertCommand = new OdbcCommand(query, _conection);
+            OdbcCommand insertCommand = new OdbcCommand(query, _connection);
             insertCommand.ExecuteNonQuery();
 
             insertCommand.CommandText = "Select @@Identity";
@@ -87,10 +115,10 @@ public class _OledbConnection : AccessConnection
     {
         try
         {
-            if (_conection.State != ConnectionState.Open)
-                _conection.Open();
+            if (_connection.State != ConnectionState.Open)
+                _connection.Open();
 
-            OleDbCommand insertCommand = new OleDbCommand(query, _conection);
+            OleDbCommand insertCommand = new OleDbCommand(query, _connection);
             insertCommand.ExecuteNonQuery();
             return true;
         }
@@ -104,19 +132,15 @@ public class _OledbConnection : AccessConnection
 
     public override DataTable ExecuteSelect(string query )
     {
-        DataTable dt = null;
+        DataTable dt = new DataTable();
 
         try
         {
-            if (_conection.State != ConnectionState.Open)
-                _conection.Open();
+            if (_connection.State != ConnectionState.Open)
+                _connection.Open();
 
-            OleDbDataAdapter da = new OleDbDataAdapter(query, _conection);
-
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-
-            dt = ds.Tables[0];
+            OleDbDataReader dr = new OleDbCommand(query, _connection).ExecuteReader();
+            dt.Load(dr);
         }
         catch (Exception ex)
         {
@@ -130,9 +154,9 @@ public class _OledbConnection : AccessConnection
     public override void ForceClose()
     {
         if (_isConnected)
-            _conection.Close();
+            _connection.Close();
 
-        _conection.Dispose();        
+        _connection.Dispose();        
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -145,7 +169,7 @@ public class _OledbConnection : AccessConnection
 
     private string _path;
     private string _pass;
-    private OleDbConnection _conection;
+    private OleDbConnection _connection;
     private bool _isConnected;
 
     //------------------------------------------------------------------------------------------
